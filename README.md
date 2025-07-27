@@ -57,7 +57,7 @@ To get started with VibeCoder Blueprint, simply follow these steps.
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/](https://github.com/)https://github.com/AKS01-github/VibeCoder-Blueprint.git
+    git clone https://github.com/AKS01-github/VibeCoder-Blueprint.git
     ```
 2.  **Navigate to the project directory:**
     ```bash
@@ -108,6 +108,6 @@ This project is open-source and distributed under the [MIT License](LICENSE).
 
 ### Contact & Support
 
-For questions, bug reports, feature requests, or general discussions, please use [GitHub Issues](https://github.com/[YourGitHubUsername]/vibecoder-blueprint/issues).
+For questions, bug reports, feature requests, or general discussions, please use [GitHub Issues](https://github.com/AKS01-github/VibeCoder-Blueprint/issues).
 
 ---
