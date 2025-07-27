@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe Coding - Part 3: Functionality & Use Cases</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f4f4f4;
+    }
+    .section {
+      background: white;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    textarea, input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 1rem;
+    }
+    #output {
+      white-space: pre-wrap;
+      background: #eaeaea;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 5px;
+    }
+    #downloadButtons {
+      display: none;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Part 3: Functionality & Use Cases</h1>
+  <form id="jtbdForm">
+    <div class="section">
+      <h2>Work / Tasks to be done</h2>
+      <label for="functionalJobs">Functional Jobs</label>
+      <textarea id="functionalJobs" placeholder="Tasks the user needs to get done"></textarea>
+
+      <label for="emotionalJobs">Emotional Jobs</label>
+      <textarea id="emotionalJobs" placeholder="How the user wants to feel while using your app"></textarea>
+
+      <label for="socialJobs">Social Jobs</label>
+      <textarea id="socialJobs" placeholder="How the user wants to be perceived by others"></textarea>
+
+      <label for="contextTriggers">Contextual Triggers</label>
+      <textarea id="contextTriggers" placeholder="What makes the user seek out your app?"></textarea>
+
+      <label for="desiredOutcomes">Desired Outcomes</label>
+      <textarea id="desiredOutcomes" placeholder="End result or success metric the user wants"></textarea>
+
+      <label for="obstacles">Obstacles / Anxieties</label>
+      <textarea id="obstacles" placeholder="Concerns the user might have using your product"></textarea>
+    </div>
+
+    <div class="section">
+      <h2>Use Cases & User Stories</h2>
+      <label for="primaryUseCases">Primary Use Cases</label>
+      <textarea id="primaryUseCases" placeholder="Key scenarios where your app is used"></textarea>
+
+      <label for="userStories">User Stories</label>
+      <textarea id="userStories" placeholder="As a [user], I want to [action], so I can [benefit]."></textarea>
+
+      <label for="successCriteria">Success Criteria</label>
+      <textarea id="successCriteria" placeholder="How will you know if a use case is successful?"></textarea>
+
+      <label for="userJourney">User Journey Mapping</label>
+      <textarea id="userJourney" placeholder="Steps from discovering the app to achieving their goal"></textarea>
+    </div>
+
+    <button type="button" onclick="generateOutput()">Generate Markdown Output</button>
+<button type="button" onclick="clearForm()" style="background-color: #dc3545;">Clear All</button>
+    <div id="output"></div>
+    <div id="downloadButtons">
+      <button type="button" onclick="downloadMarkdown()">Download as Markdown</button>
+      <button type="button" onclick="downloadPDF()">Download as PDF</button>
+    </div>
+  </form>
+
+  <script>
+    function generateOutput() {
+      const ids = [
+        'functionalJobs','emotionalJobs','socialJobs','contextTriggers','desiredOutcomes','obstacles',
+        'primaryUseCases','userStories','successCriteria','userJourney'
+      ];
+      const v = {};
+      ids.forEach(id => v[id] = document.getElementById(id).value);
+      const md = `## Part 3: Functionality & Use Cases\n\n### Work/Tasks To Be Done\n- **Functional Jobs:** ${v.functionalJobs}\n- **Emotional Jobs:** ${v.emotionalJobs}\n- **Social Jobs:** ${v.socialJobs}\n- **Contextual Triggers:** ${v.contextTriggers}\n- **Desired Outcomes:** ${v.desiredOutcomes}\n- **Obstacles/Anxieties:** ${v.obstacles}\n\n### Use Cases & Stories\n- **Primary Use Cases:** ${v.primaryUseCases}\n- **User Stories:** ${v.userStories}\n- **Success Criteria:** ${v.successCriteria}\n- **User Journey Map:** ${v.userJourney}`;
+      document.getElementById("output").textContent = md;
+      document.getElementById("downloadButtons").style.display = 'block';
+    }
+
+    function downloadMarkdown() {
+      const blob = new Blob([document.getElementById("output").textContent], { type: "text/markdown" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "vibe_part3_output.md";
+      link.click();
+    }
+
+    function downloadPDF() {
+      const text = document.getElementById("output").textContent;
+      const win = window.open('', '', 'height=800,width=800');
+      win.document.write('<html><head><title>Vibe Coding Output</title></head><body><pre>' + text + '</pre></body></html>');
+      win.document.close();
+      win.print();
+    }
+  
+    // Save and restore input/textarea data using localStorage
+    const form = document.querySelector('form');
+    if (form) {
+      form.querySelectorAll('input, textarea').forEach(el => {
+        const key = location.pathname + ':' + el.id;
+        if (localStorage.getItem(key)) {
+          el.value = localStorage.getItem(key);
+        }
+        el.addEventListener('input', () => {
+          localStorage.setItem(key, el.value);
+        });
+      });
+    }
+
+    function clearForm() {
+      if (confirm("Are you sure you want to clear all inputs?")) {
+        if (form) {
+          form.querySelectorAll('input, textarea').forEach(el => {
+            el.value = '';
+            const key = location.pathname + ':' + el.id;
+            localStorage.removeItem(key);
+          });
+        }
+        document.getElementById("output").textContent = '';
+        document.getElementById("downloadButtons").style.display = 'none';
+      }
+    }
+</script>
+  <div style="margin-top: 2rem; display: flex; justify-content: space-between;"><a href="Part2-Template-Nav.html" style="text-decoration:none;"><button>&larr; Back</button></a><a href="Part4-Template-Nav.html" style="text-decoration:none;"><button>Next &rarr;</button></a></div>
+</body>
+</html>
