@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe Coding - Part 4: Business Goals & Validation</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; padding: 2rem; }
+    .section { background: #fff; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 1px 6px rgba(0,0,0,0.1); }
+    h1, h2 { color: #222; }
+    label { display: block; margin-top: 1rem; font-weight: bold; }
+    textarea, input { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px; margin-top: 0.3rem; }
+    button { background-color: #007bff; color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 4px; cursor: pointer; }
+    #output { white-space: pre-wrap; background: #eee; padding: 1rem; border-radius: 5px; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>Part 4: Business Goals, Metrics & Validation</h1>
+  <form id="bizForm">
+    <div class="section">
+      <h2>Business Objectives</h2>
+      <label for="coreKpis">Core KPIs</label>
+      <textarea id="coreKpis" placeholder="What performance indicators are most critical (e.g., revenue, retention)?"></textarea>
+
+      <label for="successDefinition">What does success look like?</label>
+      <textarea id="successDefinition" placeholder="Business outcome definition of success"></textarea>
+
+      <label for="monetizationStrategy">Monetization Strategy</label>
+      <textarea id="monetizationStrategy" placeholder="How will this app generate revenue?"></textarea>
+
+      <label for="growthMetrics">Growth Metrics</label>
+      <textarea id="growthMetrics" placeholder="How will we measure user acquisition or market share growth?"></textarea>
+    </div>
+
+    <div class="section">
+      <h2>Assumptions & Validation</h2>
+      <label for="gtmAssumptions">Go-To-Market (GTM) Assumptions</label>
+      <textarea id="gtmAssumptions" placeholder="List your assumptions about market, users, behavior, pricing, etc."></textarea>
+
+      <label for="validationCheckpoints">Validation Checkpoints</label>
+      <textarea id="validationCheckpoints" placeholder="How and when will you validate each GTM assumption?"></textarea>
+
+      <label for="earlySignals">Early Success Signals</label>
+      <textarea id="earlySignals" placeholder="What are early indicators that you're on the right track?"></textarea>
+    </div>
+
+    <button type="button" onclick="generateOutput()">Generate Markdown Output</button>
+    <button type="button" onclick="clearForm()" style="margin-left: 1rem; background-color: #dc3545;">Clear All</button>
+
+  </form>
+
+  <div id="output"></div>
+
+  <script>
+    function generateOutput() {
+      const ids = [
+        'coreKpis','successDefinition','monetizationStrategy','growthMetrics',
+        'gtmAssumptions','validationCheckpoints','earlySignals'
+      ];
+      const v = {};
+      ids.forEach(id => v[id] = document.getElementById(id).value);
+
+      const md = `## Part 4: Business Goals, Metrics & Validation\n\n### Business Objectives\n- **Core KPIs:** ${v.coreKpis}\n- **Definition of Success:** ${v.successDefinition}\n- **Monetization Strategy:** ${v.monetizationStrategy}\n- **Growth Metrics:** ${v.growthMetrics}\n\n### Assumptions & Validation\n- **Go-To-Market Assumptions:** ${v.gtmAssumptions}\n- **Validation Checkpoints:** ${v.validationCheckpoints}\n- **Early Success Signals:** ${v.earlySignals}`;
+
+      document.getElementById("output").textContent = md;
+      if (!document.getElementById('downloadButtons')) {
+        const btns = document.createElement('div');
+        btns.id = 'downloadButtons';
+        btns.innerHTML = `
+          <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+            <button onclick="downloadMarkdown()">Download as Markdown</button>
+            <button onclick="downloadPDF()">Download as PDF</button>
+          </div>`;
+        document.getElementById("output").appendChild(btns);
+      }
+
+    }
+  
+    function downloadMarkdown() {
+      const content = document.getElementById('output').textContent;
+      const blob = new Blob([content], { type: 'text/markdown' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'output.md';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function downloadPDF() {
+      const content = document.getElementById('output').textContent;
+      const win = window.open('', '_blank');
+      win.document.write('<pre>' + content + '</pre>');
+      win.document.close();
+      win.print();
+    }
+
+    function clearForm() {
+      const form = document.querySelector('form');
+      if (confirm("Are you sure you want to clear all inputs?")) {
+        if (form) {
+          form.querySelectorAll('input, textarea').forEach(el => {
+            el.value = '';
+            const key = location.pathname + ':' + el.id;
+            localStorage.removeItem(key);
+          });
+        }
+        document.getElementById("output").textContent = '';
+        const btns = document.getElementById("downloadButtons");
+        if (btns) btns.remove();
+      }
+    }
+
+
+    // Auto-save to localStorage
+    const form = document.querySelector('form');
+    if (form) {
+      form.querySelectorAll('input, textarea').forEach(el => {
+        const key = location.pathname + ':' + el.id;
+        // Restore saved value
+        if (localStorage.getItem(key)) {
+          el.value = localStorage.getItem(key);
+        }
+        // Save on input
+        el.addEventListener('input', () => {
+          localStorage.setItem(key, el.value);
+        });
+      });
+    }
+</script>
+<div style="margin-top: 2rem; display: flex; justify-content: space-between;"><a href="Part3-Template-Nav.html" style="text-decoration:none;"><button>&larr; Back</button></a><div></div></div>
+</body>
+</html>
